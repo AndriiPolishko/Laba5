@@ -2,8 +2,9 @@
 #include <fstream>
 #include <vector>
 #include <string>
-
+#include <list>
 using namespace std;
+
 
 struct Spot{
     float latitude;
@@ -13,7 +14,52 @@ struct Spot{
     string name;
     string address;
 };
+/*class Node
+        {
+            Node Child1,Child2;
+            int maxSize = 10;
+            list<Spot> Points;
+        public:
+            bool IsParent = false;
+            int Size = 0;
+            double xMax, xMin, yMax, yMin;
 
+        };
+
+*/
+
+class rTree
+        {
+            bool isParent = false;
+            int maxLong,minLong,maxLatt,minLatt;
+            int size = 0,maxSize = 10;
+            list<Spot> points;
+        public:
+            void add(Spot p)
+            {
+                if(!isParent)
+                {
+                    points.push_back(p);
+                    size++;
+                    if (size == 1)
+                    {
+                        minLatt = maxLatt = p.latitude;
+                        minLong = maxLong = p.longitude;
+                    }
+                    else
+                    {
+                        maxLong = maxLong > p.longitude ? maxLong : p.longitude;
+                        minLong = minLong < p.longitude ? minLong : p.longitude;
+                        maxLatt = maxLatt > p.latitude ? maxLatt : p.latitude;
+                        minLatt = minLatt < p.latitude ? minLatt : p.latitude;
+                        //if(size>maxSize) divivide;
+                    }
+                }
+
+            }
+
+
+        };
 vector<Spot> readSpotList(string);
 float stringToFloat(string);
 
@@ -21,7 +67,8 @@ int main() {
     vector<Spot> geoSpotsList;
 
     geoSpotsList = readSpotList("spots.csv");
-
+for(int i = 0 ;i<geoSpotsList.size();i++)
+    cout<<geoSpotsList[i].latitude<<endl;
 
     return 0;
 }
