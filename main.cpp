@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <list>
+#include <cfloat>
+#include <cmath>
 using namespace std;
 
 
@@ -28,6 +30,52 @@ struct Spot{
 
 */
 
+
+struct Point {
+        double x;
+        double y;
+        Point()
+        {
+            x = DBL_MAX;
+            y = DBL_MAX;
+        }
+        Point(double vx, double vy){
+            x = vx;
+            y = vy;
+        }
+};
+/*struct boundingBox
+        {
+    point  left,right;
+    double perimetr,ploshya;
+        };
+
+struct obj
+        {
+
+    boundingBox mbr;
+    Spot * i;
+        };
+
+class node
+        {
+    boundingBox nmbr;
+    node* parent;
+    vector<node*> children;
+    vector<obj*> objects;
+    bool isLeaf;
+    int level;
+    bool getIsLeaf();
+    node * getChild(node*);
+    obj
+        };
+*/
+/*bool isLeaf,isNonLeaf;
+vector<Spot*> tochki;
+vector<node*> children;
+node* parent;
+boundingBox MBR;
+vector<boundingBox> I;*/
 class rTree
         {
             bool isParent = false;
