@@ -15,7 +15,7 @@ struct Spot {
     string address;
 };
 
-struct Vector2f { // f - for float, V - for Vandeta
+struct Vector2f { // f - for float, V - for Vendeta
     float x;
     float y;
 };

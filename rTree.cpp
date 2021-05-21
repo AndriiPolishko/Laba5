@@ -2,8 +2,6 @@
 
 RTree::RTree()
 {
-	
-
 
 	root = new Node;
 

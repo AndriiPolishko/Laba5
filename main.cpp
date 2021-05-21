@@ -74,3 +74,12 @@ vector<Spot> readSpotList(string path){
 
     return geoSpots;
 }
+
+bool InersectPoint(Vector2f point,Rectangle rec)
+{
+    double x1 = rec.LB.x,y1 = rec.LB.y;
+    double x2 = rec.RT.x,y2 = rec.RT.y;
+    if(point.x < x1 || point.x > x2 || point.y < y1 || point.y > y2)
+        return false;
+    return true;
+}
