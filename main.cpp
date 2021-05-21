@@ -7,8 +7,8 @@
 #include <cmath>
 using namespace std;
 
-
-struct Spot{
+struct Spot
+        {
     float latitude;
     float longitude;
     string type;
@@ -16,98 +16,12 @@ struct Spot{
     string name;
     string address;
 };
-/*class Node
-        {
-            Node Child1,Child2;
-            int maxSize = 10;
-            list<Spot> Points;
-        public:
-            bool IsParent = false;
-            int Size = 0;
-            double xMax, xMin, yMax, yMin;
 
+struct Mbr
+        {
+    Spot leftDown,rightUp;
         };
 
-*/
-
-
-struct Point {
-        double x;
-        double y;
-        Point()
-        {
-            x = DBL_MAX;
-            y = DBL_MAX;
-        }
-        Point(double vx, double vy){
-            x = vx;
-            y = vy;
-        }
-};
-/*struct boundingBox
-        {
-    point  left,right;
-    double perimetr,ploshya;
-        };
-
-struct obj
-        {
-
-    boundingBox mbr;
-    Spot * i;
-        };
-
-class node
-        {
-    boundingBox nmbr;
-    node* parent;
-    vector<node*> children;
-    vector<obj*> objects;
-    bool isLeaf;
-    int level;
-    bool getIsLeaf();
-    node * getChild(node*);
-    obj
-        };
-*/
-/*bool isLeaf,isNonLeaf;
-vector<Spot*> tochki;
-vector<node*> children;
-node* parent;
-boundingBox MBR;
-vector<boundingBox> I;*/
-class rTree
-        {
-            bool isParent = false;
-            int maxLong,minLong,maxLatt,minLatt;
-            int size = 0,maxSize = 10;
-            list<Spot> points;
-        public:
-            void add(Spot p)
-            {
-                if(!isParent)
-                {
-                    points.push_back(p);
-                    size++;
-                    if (size == 1)
-                    {
-                        minLatt = maxLatt = p.latitude;
-                        minLong = maxLong = p.longitude;
-                    }
-                    else
-                    {
-                        maxLong = maxLong > p.longitude ? maxLong : p.longitude;
-                        minLong = minLong < p.longitude ? minLong : p.longitude;
-                        maxLatt = maxLatt > p.latitude ? maxLatt : p.latitude;
-                        minLatt = minLatt < p.latitude ? minLatt : p.latitude;
-                        //if(size>maxSize) divivide;
-                    }
-                }
-
-            }
-
-
-        };
 vector<Spot> readSpotList(string);
 float stringToFloat(string);
 
@@ -170,4 +84,43 @@ float stringToFloat(string strNum){
     }
 
     return stof(strNum);
+}
+
+bool intersectPointRectangle(Spot point, Mbr rect) {
+    double x1 = rect.leftDown.longitude, y1 = rect.leftDown.latitude,
+            x2 = rect.rightUp.longitude, y2 = rect.rightUp.latitude;
+    if (point.longitude < x1 || point.longitude > x2 || point.latitude < y1 || point.latitude > y2)
+        return false;
+    return true;
+}
+
+bool intersectRectangles(Mbr rect1, Mbr rect2){
+    if ((rect1.leftDown.longitude <= rect2.rightUp.longitude || rect1.rightUp.longitude >= rect2.leftDown.longitude) &&
+        (rect1.leftDown.latitude <= rect2.rightUp.latitude || rect1.rightUp.latitude >= rect2.leftDown.latitude))
+        return true;
+    return false;
+}
+
+bool intersectCircleRectangle(Spot point, double R, Mbr rect)
+{
+    double centerX = (rect.leftDown.longitude + rect.rightUp.longitude) / 2,
+            centerY = (rect.leftDown.latitude + rect.rightUp.latitude) / 2,
+            width = -rect.leftDown.longitude + rect.rightUp.longitude,
+            height = -rect.leftDown.latitude + rect.rightUp.latitude;
+    double dx = abs(point.longitude - centerX);
+    double dy = abs(point.latitude - centerY);
+
+    if (dx > width / 2 + R) { return false; }
+    if (dy > height / 2 + R) { return false; }
+
+    if (dx <= width / 2) { return true; }
+    if (dy <= height / 2) { return true; }
+
+    double cornerDistance = pow(dx - width / 2,  2) + pow(dy - height / 2, 2);
+
+    return cornerDistance <= pow(R, 2);
+}
+
+bool intersectCirclePoint(Spot center, double R, Spot point) {
+    return pow(center.longitude - point.longitude, 2) + pow(center.latitude - point.latitude, 2) <= pow(R, 2);
 }
