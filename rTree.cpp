@@ -2,14 +2,19 @@
 
 RTree::RTree()
 {
-	Node rootNode;
+	
 
-	rootNode.isLeaf = true;
-	rootNode.MBR = { Vector2f(), Vector2f() };
 
-	root = &rootNode;
+	root = new Node;
+
+	root->isLeaf = true;
+	root->MBR = { Vector2f(), Vector2f() };
 
 	leafLevel = 1;
+
+	// Main tree parameters (2 <= m <= M/2)
+	m = 4;
+	M = 10;
 }
 
 RTree::~RTree()
@@ -25,6 +30,15 @@ void RTree::Insert(Spot* newData)
 {
 	Node* N;
 	N = ChooseSubtree(newData);
+
+	if (N->data.size() < M)
+	{
+		N->data.push_back(newData);
+	}
+	else
+	{
+
+	}
 }
 
 Node* RTree::ChooseSubtree(Spot* newData)
@@ -42,7 +56,7 @@ Node* RTree::ChooseSubtree(Spot* newData)
 		// childpointers in N do not point to leaves
 		else 
 		{
-			N = MinAreaEnlargementNode(N, newData);
+			N = MinAreaEnlargeNode(N, newData);
 		}
 	}
 
@@ -122,7 +136,7 @@ Node* RTree::MinOverlapEnlargeNode(Node* N, Spot* data)
 	return choosenNode;
 }
 
-Node* RTree::MinAreaEnlargementNode(Node* N, Spot* data)
+Node* RTree::MinAreaEnlargeNode(Node* N, Spot* data)
 {
 
 	Node* choosenNode;
@@ -143,12 +157,15 @@ Node* RTree::MinAreaEnlargementNode(Node* N, Spot* data)
 
 		curAreaEnlargment = enlArea - oldArea;
 
+		// Compare area enlargement
 		if (minAreaEnlargment > curAreaEnlargment)
 		{
 			choosenNode = N->childs[i];
 			minAreaEnlargment = curAreaEnlargment;
 		}
 		else if (minAreaEnlargment == curAreaEnlargment) {
+			//Compare area
+
 			float prevEnlArea;
 
 			prevEnlArea = FindRectangleArea(

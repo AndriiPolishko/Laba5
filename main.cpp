@@ -8,7 +8,6 @@
 // Functions for parsing data
 //////////////////////////////////////////////////
 vector<Spot> readSpotList(string);
-float stringToFloat(string);
 
 //////////////////////////////////////////////////
 // R*-tree functions
@@ -18,8 +17,20 @@ float stringToFloat(string);
 
 
 int main() {
+    setlocale(LC_ALL, "ru");
+
+    vector<Spot> geoSpots;
     RTree dataTree;
 
+    geoSpots = readSpotList("c:/users/roman/source/repos/laba5/data/spots.csv");
+
+  
+
+    dataTree.InsertData(&geoSpots[0]);
+
+    cout << dataTree.root->data[0]->latitude << endl;
+    cout << dataTree.root->data[0]->longitude<< endl;
+    cout << dataTree.root->data[0]->type << endl;
 
     return 0;
 }
@@ -39,10 +50,10 @@ vector<Spot> readSpotList(string path){
         Spot newGeoSpot;
 
         getline(file, buff, ';');
-        newGeoSpot.latitude = stringToFloat(buff);
+        newGeoSpot.latitude = stof(buff);
 
         getline(file, buff, ';');
-        newGeoSpot.longitude = stringToFloat(buff);
+        newGeoSpot.longitude = stof(buff);
 
         getline(file, buff, ';');
         newGeoSpot.type = buff;
@@ -63,14 +74,3 @@ vector<Spot> readSpotList(string path){
 
     return geoSpots;
 }
-
-float stringToFloat(string strNum){
-
-    for (int i = 0; i < strNum.size(); ++i) {
-        if (strNum[i] == ',')
-            strNum[i]='.';
-    }
-
-    return stof(strNum);
-}
-

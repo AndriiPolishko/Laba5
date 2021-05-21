@@ -11,6 +11,9 @@ public:
 	~RTree();
 
 	Node* root; // Pointer to tree root
+	int m; // Minimal entries naumber
+	int M; // Maximum entries naumber
+	
 	
 	void InsertData(Spot*);
 
@@ -21,7 +24,7 @@ private:
 	
 
 	Node* MinOverlapEnlargeNode(Node*, Spot*);
-	Node* MinAreaEnlargementNode(Node*, Spot*);
+	Node* MinAreaEnlargeNode(Node*, Spot*);
 	float FindOverlapArea(Rectangle& , Rectangle& );
 	float FindRectangleArea(Rectangle&);
 	Rectangle& CalculateEnlargedMBR(Rectangle&, Spot*);

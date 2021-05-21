@@ -26,8 +26,9 @@ struct Rectangle {
 };
 
 struct Node {
-    Rectangle MBR;
     vector<Node*> childs;
     vector<Spot*> data;
+    Node* parent;
+    Rectangle MBR;
     bool isLeaf;
 };
