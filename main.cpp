@@ -22,6 +22,14 @@ struct Mbr
     Spot leftDown,rightUp;
         };
 
+struct Node
+{
+    Mbr rect;
+    Spot point;
+    vector<Node*> children;
+
+};
+
 vector<Spot> readSpotList(string);
 float stringToFloat(string);
 
