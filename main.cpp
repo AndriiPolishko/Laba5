@@ -1,35 +1,32 @@
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
+#include "rTree.h"
 
-using namespace std;
 
-struct Spot{
-    float latitude;
-    float longitude;
-    string type;
-    string subtype;
-    string name;
-    string address;
-};
-
+//////////////////////////////////////////////////
+// Functions for parsing data
+//////////////////////////////////////////////////
 vector<Spot> readSpotList(string);
 float stringToFloat(string);
 
-int main() {
-    vector<Spot> geoSpotsList;
+//////////////////////////////////////////////////
+// R*-tree functions
+//////////////////////////////////////////////////
 
-    geoSpotsList = readSpotList("spots.csv");
+
+
+
+int main() {
+    RTree dataTree;
 
 
     return 0;
 }
 
+
 vector<Spot> readSpotList(string path){
     ifstream file(path);
-
-    cout << "Here" << endl;
 
     if (!file.is_open()){
         cout << "Failed to open spot list file!" << endl;
@@ -76,3 +73,4 @@ float stringToFloat(string strNum){
 
     return stof(strNum);
 }
+
