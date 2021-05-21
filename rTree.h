@@ -20,9 +20,11 @@ private:
 
 	
 
-	vector<Node*> MinOverlapEnlargeNodes(Node*, Spot*);
-	float FindOverlapArea(Rectangle , Rectangle );
-	Rectangle CalculateEnlargedMBR(Rectangle&, Spot*);
+	Node* MinOverlapEnlargeNode(Node*, Spot*);
+	Node* MinAreaEnlargementNode(Node*, Spot*);
+	float FindOverlapArea(Rectangle& , Rectangle& );
+	float FindRectangleArea(Rectangle&);
+	Rectangle& CalculateEnlargedMBR(Rectangle&, Spot*);
 
 	int leafLevel; // Tree level, where the leaves are
 };

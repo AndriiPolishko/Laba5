@@ -30,31 +30,35 @@ void RTree::Insert(Spot* newData)
 Node* RTree::ChooseSubtree(Spot* newData)
 {
 	Node* N = root;
+	vector<Node*> ;
 
 	while (!N->isLeaf)
 	{
 		// childpointers in N point to leaves
 		if (N->childs[0]->data.size())
 		{
-
+			N = MinOverlapEnlargeNode(N, newData);
 		}
 		// childpointers in N do not point to leaves
 		else 
 		{
-
+			N = MinAreaEnlargementNode(N, newData);
 		}
 	}
 
 	return N;
 }
 
-vector<Node*> RTree::MinOverlapEnlargeNodes(Node* N, Spot* data)
+Node* RTree::MinOverlapEnlargeNode(Node* N, Spot* data)
 {
-	vector<Node*> choosenNodes;
+	Node* choosenNode;
 	Rectangle enlargedMBR;
 
-	float minOverlapEnlargment = 100000000000;
+	float minOverlapEnlargment = 10000000000000;
 	float curOverlapEnlargment;
+
+	float curOverlap;
+	float oldOverlap;
 
 
 	for (int i = 0; i < N->childs.size(); i++)
@@ -66,15 +70,103 @@ vector<Node*> RTree::MinOverlapEnlargeNodes(Node* N, Spot* data)
 		{
 			if (j == i) continue;
 
+			oldOverlap = FindOverlapArea(
+				N->childs[i]->MBR,
+				N->childs[j]->MBR
+			);
 
+			curOverlap = FindOverlapArea(
+				enlargedMBR, 
+				N->childs[j]->MBR
+			);
+
+			curOverlapEnlargment = curOverlap - oldOverlap;
+		}
+
+		// Compare MBR overlap enlargement
+		if (curOverlapEnlargment < minOverlapEnlargment)
+		{
+
+			choosenNode = N->childs[i];
+			minOverlapEnlargment = curOverlapEnlargment;
+		}
+		else if (curOverlapEnlargment == minOverlapEnlargment)
+		{
+			// Compare MBR area enlargement
+			float oldArea;
+			float newArea;
+			float oldAreaEnl;
+			float newAreaEnl;
+			float oldDelta;
+			float newDelta;
+
+			oldAreaEnl = FindRectangleArea(CalculateEnlargedMBR(choosenNode->MBR, data));
+			newAreaEnl = FindRectangleArea(CalculateEnlargedMBR(N->childs[i]->MBR, data));
+
+			oldArea = FindRectangleArea(choosenNode->MBR);
+			newArea = FindRectangleArea(N->childs[i]->MBR);
+
+			oldDelta = oldAreaEnl - oldArea;
+			newDelta = newAreaEnl - newArea;
+
+			if (oldDelta > newDelta)
+				choosenNode = N->childs[i];
+			else if (oldDelta == newDelta) {
+				// Compare new MBR areas
+				if (oldAreaEnl > newAreaEnl)
+					choosenNode = N->childs[i];
+			}
+		}
+	}
+
+	return choosenNode;
+}
+
+Node* RTree::MinAreaEnlargementNode(Node* N, Spot* data)
+{
+
+	Node* choosenNode;
+	Rectangle enlargedMBR;
+
+	float minAreaEnlargment = 10000000000000;
+	float curAreaEnlargment;
+
+	float oldArea;
+	float enlArea;
+	
+	for (int i = 0; i < N->childs.size(); i++)
+	{
+		enlargedMBR = CalculateEnlargedMBR(N->childs[i]->MBR, data);
+
+		oldArea = FindRectangleArea(N->childs[i]->MBR);
+		enlArea = FindRectangleArea(enlargedMBR);
+
+		curAreaEnlargment = enlArea - oldArea;
+
+		if (minAreaEnlargment > curAreaEnlargment)
+		{
+			choosenNode = N->childs[i];
+			minAreaEnlargment = curAreaEnlargment;
+		}
+		else if (minAreaEnlargment == curAreaEnlargment) {
+			float prevEnlArea;
+
+			prevEnlArea = FindRectangleArea(
+				CalculateEnlargedMBR(choosenNode->MBR, data)
+			);
+
+			if (prevEnlArea > enlArea)
+			{
+				choosenNode = N->childs[i];
+			}
 
 		}
 	}
 
-	return choosenNodes;
+	return choosenNode;
 }
 
-float RTree::FindOverlapArea(Rectangle A, Rectangle B)
+float RTree::FindOverlapArea(Rectangle& A, Rectangle& B)
 {
 	int cordsFound = 0;
 	float area = 0;
@@ -141,7 +233,12 @@ float RTree::FindOverlapArea(Rectangle A, Rectangle B)
 	return area;
 }
 
-Rectangle RTree::CalculateEnlargedMBR(Rectangle& oldMBR, Spot* data)
+float RTree::FindRectangleArea(Rectangle& a)
+{
+	return (a.RT.x - a.LB.x) * (a.RT.y - a.LB.y);
+}
+
+Rectangle& RTree::CalculateEnlargedMBR(Rectangle& oldMBR, Spot* data)
 {
 	Rectangle newMBR;
 	Vector2f newSpot = {data->latitude, data->longitude};
